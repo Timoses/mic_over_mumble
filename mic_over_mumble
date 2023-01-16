@@ -126,7 +126,7 @@ remove_sink () {
 add_source () {
     echo "Adding a virtual microphone..."
     SOURCE_MODULE_PAID=$(pactl load-module \
-        module-virtual-source \
+        module-remap-source \
         source_name=VirtualMic \
         master=Loopback_of_Mumble.monitor \
         source_properties=device.description=VirtualMic)
