@@ -138,7 +138,7 @@ remove_source () {
 
 move_mumble_to_sink () {
     MUMBLE_CLIENT_PAID=$(get_mumble_client_paid)
-    pacmd move-sink-input "$MUMBLE_CLIENT_PAID" "$SINK_PAID"
+    pactl move-sink-input "$MUMBLE_CLIENT_PAID" "$SINK_PAID"
 }
 
 set_default_source () {
@@ -148,11 +148,11 @@ set_default_source () {
 # Data fetching & parsing.
 
 get_mumble_client_paid () {
-    result=$(pacmd list-sink-inputs |
-        grep -F -e "index: " -e "media.name = " |
-        cut_every_second_newline |
-        grep -F -e "Mumble" |
-        take_second_column)
+    result=$(pactl list sink-inputs |
+        grep -e '^Sink Input' -e "application.name = \"Mumble\"" |
+        sed -n '/application.name/{x;p;d;}; x' |
+        awk '{ print $3 }' |
+        cut -c 2- )
 
     if [ -z "$result" ]; then
         echo "Error: Mumble client did not connect to PulseAudio (yet?)." 2>&1
@@ -170,12 +170,12 @@ get_mumble_client_paid () {
 }
 
 get_sink_paid () {
-    result=$(pacmd list-sinks |
-        grep -F -e "index: " -e "name: " |
-        cut_every_second_newline |
-        grep -F -e "Loopback" |
-        cut_active_device_indicator |
-        take_second_column)
+
+    result=$(pactl list sinks |
+        grep -e '^Sink' -e "Owner Module: $SINK_MODULE_PAID" |
+        sed -n '/Owner Module/{x;p;d;}; x' |
+        awk '{ print $2 }' |
+        cut -c 2- )
 
      if [ -z "$result" ]; then
         echo "Error: Failed to find the device the script should have added." 2>&1
