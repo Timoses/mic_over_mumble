@@ -61,7 +61,7 @@ shut_down () {
 
 start_mumble_client () {
     echo "Starting Mumble client (a window should appear in a moment)..."
-    mumble "mumble://localhost" >/dev/null 2>&1 &
+    mumble "mumble://server@localhost" >/dev/null 2>&1 &
     MUMBLE_CLIENT_ID=$!
     # FIXME: I don't remember why I thought this
     # was necessary.
