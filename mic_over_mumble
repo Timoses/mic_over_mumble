@@ -8,10 +8,16 @@ set -euo pipefail
 # ID = PID / process ID
 
 main () {
+    trap clean_up EXIT
     set_up
     echo "Press Return to shut down..."
     read -n1 -s -r
     shut_down
+}
+
+clean_up () {
+    [ -n $SOURCE_MODULE_PAID ] && remove_source
+    [ -n $SINK_MODULE_PAID ] && remove_sink
 }
 
 prepare_env () {
