@@ -66,11 +66,13 @@ start_mumble_client () {
     # FIXME: I don't remember why I thought this
     # was necessary.
     disown
-    # Mumble is slow to launch, and the
-    # user may need to click on OK button.
-    # FIXME: probe PulseAudio server to see if
-    # Mumble has connected.
-    sleep 15
+    # Wait for Mumble to start
+    while
+        res=$(get_mumble_client_paid)
+        echo $res
+        sleep 1
+        [[ $res == Err* ]] || break
+    do true; done
 }
 
 stop_murmur_client () {
@@ -84,7 +86,6 @@ start_mumble_server () {
     murmurd -ini ./murmur.ini &
     # Murmur forks, so the PID acquired by `$!`
     # wouldn't help us much.
-    sleep 5
 }
 
 stop_murmur_server () {
@@ -156,8 +157,6 @@ get_mumble_client_paid () {
 
     if [ -z "$result" ]; then
         echo "Error: Mumble client did not connect to PulseAudio (yet?)." 2>&1
-        print_how_to_restart 2>&1
-        exit 1
     fi
 
     if [ "$(echo "$result" | wc -l)" != "1" ]; then
