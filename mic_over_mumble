@@ -8,7 +8,7 @@ set -euo pipefail
 # ID = PID / process ID
 
 main () {
-    trap clean_up EXIT
+    trap clean_up SIGHUP SIGINT SIGQUIT SIGABRT SIGALRM SIGTERM
     set_up
     echo "Press Return to shut down..."
     read -n1 -s -r
