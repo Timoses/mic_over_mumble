@@ -18,6 +18,7 @@ main () {
 clean_up () {
     [ -n $SOURCE_MODULE_PAID ] && remove_source
     [ -n $SINK_MODULE_PAID ] && remove_sink
+    shut_down
     exit 0
 }
 
